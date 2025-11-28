@@ -1,0 +1,44 @@
+@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@variant dark (&:where(.dark, .dark *));
+@theme {
+  /* 🎨 Warna custom kamu */
+  --color-body: #000000;
+  --color-body2: #456882;
+  --color-primary: #304a5e;
+  --color-secondary: #6d94c5;
+  --color-ternary: #cbdceb;
+  --color-warning: #ad1313;
+  --color-success: #1f8d4e;
+  --color-primary2: #6482ad;
+  --color-background2: #f5eded;
+  --color-background: #f6f6f6;
+  --color-card-bg: #ffffff;
+  --color-pamong: #304a5e;
+
+  /* 🖋️ Font default */
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+.dark {
+  --color-background: #0f172a;
+  --color-background2: #1e293b;
+  --color-card-bg: #1e293b;
+  --color-body: #ffffff;
+  --color-body2: #cbd5e1;
+  --color-primary: #dcebf9;
+  --color-secondary: #93c5fd;
+  --color-ternary: #334155;
+  --color-primary2: #a5b4fc;
+  --color-warning: #f87171;
+  --color-success: #34d399;
+  --color-pamong: #98cef8;
+}
+
+html {
+  font-family: var(--font-sans);
+  scroll-behavior: smooth;
+  color: #1f2937; /* gray-800 */
+}

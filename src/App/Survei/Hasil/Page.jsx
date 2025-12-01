@@ -14,7 +14,7 @@ const survey_results = [
   { name: "Cukup memuaskan", respondents: 380 },
   { name: "Cukup puas", respondents: 180 },
   { name: "Sangat memuaskan", respondents: 280 },
-  { name: "Sangat puas (2 hari)", respondents: 70 },
+  { name: "Sangat puas", respondents: 70 },
 ];
 
 export default function HasilSurveiPage() {

@@ -1,30 +1,77 @@
-import { useParams } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
 import Footer from "../../../components/Footer";
-import gambarberita from "../../../assets/berita.png";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Calendar, Eye } from "lucide-react";
+import { supabase } from "../../../SupabaseClients"; // Pastikan path ini benar
 
-const Berita = [
-  { id: 1, title: "Berita 1", description: "Lorem ipsum dolor sit amet...", content: "Ini isi lengkap berita 1. Bisa panjang banget, misalnya paragraf-paragraf detail tentang topiknya.", image: gambarberita, date: "Hari ini" },
-  { id: 2, title: "Berita 2", description: "Sed do eiusmod tempor incididunt ut labore.", content: "Isi lengkap berita 2. Di sini bisa ditulis berita lebih detail.", image: gambarberita, date: "Kemarin" },
-  { id: 3, title: "Berita 3", description: "Ut enim ad minim veniam.", content: "Isi lengkap berita 3, menjelaskan latar belakang, kutipan, dll.", image: gambarberita, date: "2 hari lalu" },
-  { id: 4, title: "Berita 4", description: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum.", content: "Isi lengkap berita 3, menjelaskan latar belakang, kutipan, dll.", image: gambarberita, date: "3 hari lalu" },
-  { id: 5, title: "Berita 5", description: "Excepteur sint occaecat cupidatat non proident.", content: "Isi lengkap berita 3, menjelaskan latar belakang, kutipan, dll.", image: gambarberita, date: "4 hari lalu" },
-  { id: 6, title: "Berita 6", description: "Sunt in culpa qui officia deserunt mollit anim id est laborum.", content: "Isi lengkap berita 3, menjelaskan latar belakang, kutipan, dll.", image: gambarberita, date: "5 hari lalu" },
-  { id: 7, title: "Berita 7", description: "Curabitur non nulla sit amet nisl tempus convallis quis ac lectus.", content: "Isi lengkap berita 3, menjelaskan latar belakang, kutipan, dll.", image: gambarberita, date: "6 hari lalu" },
-  { id: 8, title: "Berita 8", description: "Vivamus magna justo, lacinia eget consectetur sed, convallis at tellus.", content: "Isi lengkap berita 3, menjelaskan latar belakang, kutipan, dll.", image: gambarberita, date: "1 minggu lalu" },
-  { id: 9, title: "Berita 9", description: "Pellentesque in ipsum id orci porta dapibus.", content: "Isi lengkap berita 3, menjelaskan latar belakang, kutipan, dll.", image: gambarberita, date: "8 hari lalu" },
-  { id: 10, title: "Berita 10", description: "Donec sollicitudin molestie malesuada.", content: "Isi lengkap berita 3, menjelaskan latar belakang, kutipan, dll.", image: gambarberita, date: "9 hari lalu" },
-];
+// Helper format tanggal (sama seperti di halaman list)
+const formatDate = (dateString) => {
+  if (!dateString) return "-";
+  return new Date(dateString).toLocaleDateString("id-ID", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+};
 
 export default function BeritaDetailPage() {
-  const { id } = useParams();
-  const berita = Berita.find((b) => b.id === parseInt(id));
+  const { id } = useParams(); // Ambil ID dari URL
+  const [berita, setBerita] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  if (!berita) {
+  useEffect(() => {
+    const fetchBeritaDetail = async () => {
+      try {
+        setLoading(true);
+
+        // 1. Ambil data berita berdasarkan ID
+        const { data, error } = await supabase.from("berita").select("*").eq("id", id).single(); // .single() karena kita cuma mau 1 data spesifik
+
+        if (error) throw error;
+
+        setBerita(data);
+
+        // 2. (Fitur Tambahan) Update jumlah views +1
+        // Kita tidak perlu menunggu ini selesai (fire and forget)
+        await supabase.rpc("increment_views", { row_id: id });
+        // *Catatan: Jika RPC belum dibuat, cara manual ada di bawah*
+
+        // Cara manual update views (tanpa RPC):
+        /*
+        const newViews = (data.views || 0) + 1;
+        await supabase
+          .from("berita")
+          .update({ views: newViews })
+          .eq("id", id);
+        */
+      } catch (err) {
+        console.error("Gagal mengambil berita:", err);
+        setError("Berita tidak ditemukan atau terjadi kesalahan.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBeritaDetail();
+  }, [id]);
+
+  if (loading) {
     return (
-      <main className="min-h-screen flex items-center justify-center">
-        <p>Berita tidak ditemukan 😢</p>
+      <main className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-pulse text-primary font-semibold">Memuat berita...</div>
+      </main>
+    );
+  }
+
+  if (error || !berita) {
+    return (
+      <main className="min-h-screen flex flex-col items-center justify-center bg-background gap-4">
+        <p className="text-lg text-muted-foreground">{error || "Berita tidak ditemukan 😢"}</p>
+        <Link to="/berita" className="text-primary hover:underline">
+          Kembali ke daftar berita
+        </Link>
       </main>
     );
   }
@@ -32,15 +79,40 @@ export default function BeritaDetailPage() {
   return (
     <main className="min-h-screen bg-background">
       <div className="max-w-4xl mx-auto px-4 py-12">
-        <Link to={`/berita`} className="text-primary  flex items-center gap-2 px-4 py-2">
-          <ChevronLeft className="w-4 h-4" />
-          kembali
+        {/* Tombol Kembali */}
+        <Link to={`/berita`} className="text-primary inline-flex items-center gap-2 px-0 py-2 mb-6 hover:underline transition-all">
+          <ChevronLeft className="w-5 h-5" />
+          Kembali
         </Link>
-        <h1 className="text-3xl font-bold text-primary mb-0">{berita.title}</h1>
-        <p className="text-secondary text-sm font-medium mb-2">{berita.date}</p>
-        <img src={berita.image} alt={berita.title} className="w-full h-80 object-cover rounded-xl mb-8" />
-        <p className="text-secondary text-sm font-medium mb-2">{berita.description}</p>
-        <div className="prose max-w-none text-foreground leading-relaxed">{berita.content}</div>
+
+        {/* Judul Berita */}
+        <h1 className="text-3xl md:text-5xl font-bold text-primary mb-4 leading-tight">{berita.title}</h1>
+
+        {/* Info Meta (Tanggal & Views) */}
+        <div className="flex items-center gap-4 text-secondary text-sm font-medium mb-8 border-b pb-4 border-gray-200">
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4" />
+            <span>{formatDate(berita.created_at)}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Eye className="w-4 h-4" />
+            <span>{berita.views ? berita.views + 1 : 1} kali dilihat</span>
+          </div>
+        </div>
+
+        {/* Gambar Utama */}
+        <div className="w-full aspect-video rounded-xl overflow-hidden mb-8 shadow-lg">
+          <img src={berita.image_url || "https://placehold.co/800x400?text=No+Image"} alt={berita.title} className="w-full h-full object-cover" />
+        </div>
+
+        {/* Deskripsi Singkat (Bold/Italic) */}
+        {berita.description && <p className="text-lg font-semibold text-foreground/80 mb-6 italic border-l-4 border-primary pl-4">{berita.description}</p>}
+
+        {/* Isi Lengkap Berita (Content) */}
+        <div className="prose max-w-none text-foreground leading-relaxed text-lg whitespace-pre-line">
+          {/* whitespace-pre-line berguna agar enter/baris baru di database terbaca */}
+          {berita.content || "Belum ada isi lengkap untuk berita ini."}
+        </div>
       </div>
 
       <Footer />

@@ -41,7 +41,7 @@ export default function ServicesSection() {
           {services.map((service, index) => {
             const Icon = service.icon;
             return (
-              <Link to={service.path} key={index} className="no-underline relative transition-all duration-300 hover:z-10 hover:scale-110 **transform**">
+              <Link to={service.path} key={index} className="no-underline relative">
                 <div className="bg-card-bg rounded-lg p-6 shadow-lg transition-shadow text-center scale-100 hover:scale-110 transition-all duration-300 ">
                   <div className="bg-primary w-16 h-16 rounded-lg flex items-center justify-center mx-auto mb-4">
                     <Icon className="w-8 h-8 text-card-bg" />

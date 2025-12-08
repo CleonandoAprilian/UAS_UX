@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import Footer from "../../../components/Footer";
 import { Check, ChevronLeft, User, Eye } from "lucide-react";
@@ -10,23 +10,23 @@ export default function DetailPanduanPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const viewIncremented = useRef(false);
+
   useEffect(() => {
     const fetchPanduanDetail = async () => {
-      setLoading(true);
       try {
+        setLoading(true);
         // 1. Ambil data panduan berdasarkan ID
         const { data, error } = await supabase.from("panduan").select("*").eq("id", id).single();
 
         if (error) throw error;
         setDetail(data);
 
-        // 2. Update views +1 (Perbaikan Error .catch)
-        // Kita tidak perlu menunggu (await) ini selesai agar loading terasa cepat
-        // Fungsi RPC ini harus sudah dibuat di SQL Editor Supabase
-        const { error: viewError } = await supabase.rpc("increment_views_panduan", { row_id: id });
+        if (!viewIncremented.current) {
+          await supabase.rpc("increment_views", { row_id: id });
 
-        if (viewError) {
-          console.warn("Gagal update views (Mungkin fungsi RPC belum dibuat):", viewError.message);
+          // Tandai bahwa view sudah ditambah agar tidak jalan 2x
+          viewIncremented.current = true;
         }
       } catch (err) {
         console.error("Error fetching panduan:", err);
@@ -37,6 +37,10 @@ export default function DetailPanduanPage() {
     };
 
     fetchPanduanDetail();
+  }, [id]);
+
+  useEffect(() => {
+    viewIncremented.current = false;
   }, [id]);
 
   if (loading) {
@@ -95,7 +99,7 @@ export default function DetailPanduanPage() {
             <User className="w-4 h-4" /> Admin
           </div>
           <div className="flex items-center gap-1">
-            <Eye className="w-4 h-4" /> {detail.views || 0} dilihat
+            <Eye className="w-4 h-4" /> {(detail.views || 0) + 1} dilihat
           </div>
         </div>
 

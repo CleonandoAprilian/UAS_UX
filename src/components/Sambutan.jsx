@@ -1,12 +1,69 @@
+import React, { useState, useEffect } from "react";
 import { Venus, Mars } from "lucide-react";
 import { PiUsersThree } from "react-icons/pi";
 import kalur from "../assets/kalur.png";
+// Pastikan path ini sesuai dengan lokasi file SupabaseClients.jsx Anda
+// Jika file ini ada di folder components, mungkin pathnya "../SupabaseClients.jsx" atau "../../SupabaseClients.jsx"
+import { supabase } from "../SupabaseClients";
 
 export default function SambutanSection() {
+  // State untuk menyimpan data statistik
+  const [statistik, setStatistik] = useState({
+    penduduk: 0,
+    lakiLaki: 0,
+    perempuan: 0,
+  });
+
+  useEffect(() => {
+    async function fetchStatistik() {
+      try {
+        const { data, error } = await supabase.from("penduduk").select("jenis_kelamin");
+
+        if (error) {
+          console.error("Error fetching stats:", error);
+          return;
+        }
+
+        let laki = 0;
+        let perempuan = 0;
+
+        // Hitung manual berdasarkan data yang diterima (Logic sama dengan DataPage)
+        data.forEach((p) => {
+          const jk = p.jenis_kelamin?.toLowerCase();
+          if (jk === "laki-laki") laki++;
+          else if (jk === "perempuan") perempuan++;
+        });
+
+        setStatistik({
+          penduduk: data.length,
+          lakiLaki: laki,
+          perempuan: perempuan,
+        });
+      } catch (err) {
+        console.error("Unexpected error:", err);
+      }
+    }
+
+    fetchStatistik();
+  }, []);
+
+  // Gunakan data dari state, diformat dengan pemisah ribuan (id-ID)
   const stats = [
-    { icon: PiUsersThree, label: "Penduduk", value: "6.000" },
-    { icon: Mars, label: "Laki – Laki", value: "3.500" },
-    { icon: Venus, label: "Perempuan", value: "2.500" },
+    {
+      icon: PiUsersThree,
+      label: "Penduduk",
+      value: statistik.penduduk.toLocaleString("id-ID"),
+    },
+    {
+      icon: Mars,
+      label: "Laki – Laki",
+      value: statistik.lakiLaki.toLocaleString("id-ID"),
+    },
+    {
+      icon: Venus,
+      label: "Perempuan",
+      value: statistik.perempuan.toLocaleString("id-ID"),
+    },
   ];
 
   return (
@@ -41,7 +98,7 @@ export default function SambutanSection() {
               Melalui website desa, usaha masyarakat dapat dipromosikan hingga tingkat nasional, sementara warga dapat mengakses berbagai informasi desa dengan lengkap dalam satu platform.
             </p>
 
-            {/* STATISTIK */}
+            {/* STATISTIK DYNAMIS */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {stats.map((stat, index) => {
                 const Icon = stat.icon;

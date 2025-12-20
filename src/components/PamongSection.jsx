@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 // Import gambar pamong
@@ -32,9 +32,29 @@ const pamongData = [
 
 export default function PamongSection() {
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4;
-  const totalPages = Math.ceil(pamongData.length / itemsPerPage);
+  const [itemsPerPage, setItemsPerPage] = useState(4); // default desktop
 
+  // Deteksi ukuran layar
+  useEffect(() => {
+    const updateItemsPerPage = () => {
+      if (window.innerWidth < 768) {
+        setItemsPerPage(1);
+      } else {
+        setItemsPerPage(4);
+      }
+    };
+
+    updateItemsPerPage();
+    window.addEventListener("resize", updateItemsPerPage);
+    return () => window.removeEventListener("resize", updateItemsPerPage);
+  }, []);
+
+  // Reset halaman saat itemsPerPage berubah
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [itemsPerPage]);
+
+  const totalPages = Math.ceil(pamongData.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentData = pamongData.slice(startIndex, startIndex + itemsPerPage);
 
@@ -46,15 +66,14 @@ export default function PamongSection() {
     <section className="py-16 md:py-24 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl md:text-4xl font-bold text-primary text-center mb-12">Pamong Kalurahan Sidoarum</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 justify-items-center">
-          {currentData.map((person) => (
-            <div key={person.id} className="w-70 h-75 bg-card-bg rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col items-center mx-auto">
-              {/* Container Foto (Rasio 3:4 seperti pas foto) */}
-              <div className="w-full aspect-[3/4] mb-4 overflow-hidden rounded-xl">
-                <img src={person.image} alt={person.name} className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500" />
-              </div>
 
-              {/* Bagian Teks */}
+        {/* Data Pamong */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {currentData.map((person) => (
+            <div key={person.id} className="w-full max-w-[280px] mx-auto sm:max-w-none bg-card-bg rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col items-center">
+              <div className="w-full aspect-[3.8/4] mb-4 overflow-hidden">
+                <img src={person.image} alt={person.name} className="w-full h-full object-cover object-top" />
+              </div>
               <div className="text-center w-full">
                 <h3 className="font-extrabold text-xl text-pamong leading-tight mb-1">{person.name}</h3>
                 <p className="text-lg font-bold text-secondary uppercase">{person.position}</p>
@@ -63,20 +82,34 @@ export default function PamongSection() {
           ))}
         </div>
 
-        {/* Pagination */}
+        {/* Pagination — tetap tampil 1 2 3, tapi bisa ke halaman >3 via panah */}
+        {/* Pagination — dinamis: selalu tampilkan 3 nomor di sekitar currentPage */}
         <div className="flex justify-center items-center gap-2">
           <button onClick={prev} disabled={currentPage === 1} className="p-2 hover:bg-muted rounded-lg transition-colors border border-border disabled:opacity-50">
             <ChevronLeft className="w-5 h-5" />
           </button>
 
-          {[...Array(totalPages)].map((_, index) => {
-            const page = index + 1;
-            return (
+          {(() => {
+            // Hitung 3 halaman yang akan ditampilkan
+            let start = Math.max(1, currentPage - 1);
+            let end = Math.min(totalPages, start + 2);
+
+            // Jika jumlah halaman < 3, geser start ke kiri agar tetap ada 3 angka
+            if (end - start < 2) {
+              start = Math.max(1, end - 2);
+            }
+
+            const pages = [];
+            for (let i = start; i <= end; i++) {
+              pages.push(i);
+            }
+
+            return pages.map((page) => (
               <button key={page} onClick={() => goToPage(page)} className={`w-8 h-8 rounded-lg font-semibold transition-colors ${currentPage === page ? "bg-primary text-white" : "border border-border text-foreground hover:bg-muted"}`}>
                 {page}
               </button>
-            );
-          })}
+            ));
+          })()}
 
           <button onClick={next} disabled={currentPage === totalPages} className="p-2 hover:bg-muted rounded-lg transition-colors border border-border disabled:opacity-50">
             <ChevronRight className="w-5 h-5" />

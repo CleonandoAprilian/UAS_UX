@@ -27,8 +27,8 @@ export default function PotensiDetailPage() {
         if (error) throw error;
         setPotensi(data);
       } catch (err) {
-        console.error("Error fetching produk:", err);
-        setError("Produk tidak ditemukan");
+        console.error("Error fetching wisata:", err);
+        setError("Wisata tidak ditemukan");
       } finally {
         setLoading(false);
       }
@@ -40,7 +40,7 @@ export default function PotensiDetailPage() {
   if (loading) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-pulse text-primary font-semibold">Memuat detail produk...</div>
+        <div className="animate-pulse text-primary font-semibold">Memuat detail Wisata...</div>
       </main>
     );
   }
@@ -48,8 +48,8 @@ export default function PotensiDetailPage() {
   if (error || !potensi) {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center bg-background gap-4">
-        <p className="text-muted-foreground">Produk tidak ditemukan 😢</p>
-        <Link to="/produk" className="text-primary hover:underline">
+        <p className="text-muted-foreground">Wisata tidak ditemukan 😢</p>
+        <Link to="/wisata" className="text-primary hover:underline">
           Kembali
         </Link>
       </main>
@@ -60,7 +60,7 @@ export default function PotensiDetailPage() {
     <main className="min-h-screen bg-background">
       <div className="max-w-6xl mx-auto px-4 py-12">
         {/* Tombol Kembali */}
-        <Link to={`/produk`} className="text-primary inline-flex items-center gap-2 px-0 py-2 mb-6 hover:underline">
+        <Link to={`/wisata`} className="text-primary inline-flex items-center gap-2 px-0 py-2 mb-6 hover:underline">
           <ChevronLeft className="w-5 h-5" />
           Kembali
         </Link>

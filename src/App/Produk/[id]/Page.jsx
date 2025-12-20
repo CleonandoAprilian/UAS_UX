@@ -62,7 +62,7 @@ export default function ProdukDetailPage() {
         {/* Tombol Kembali */}
         <Link to={`/produk`} className="text-primary inline-flex items-center gap-2 px-0 py-2 mb-6 hover:underline">
           <ChevronLeft className="w-5 h-5" />
-          Kembali ke Produk
+          Kembali
         </Link>
 
         {/* Judul Utama */}

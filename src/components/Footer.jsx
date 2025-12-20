@@ -1,7 +1,20 @@
 import { Phone, Mail, Instagram } from "lucide-react";
+import { Link } from "react-router-dom";
 import logo from "../assets/sidoarum.png";
 
 export default function Footer() {
+  // Daftar tautan cepat
+  const quickLinks = [
+    { label: "Beranda", to: "/" },
+    { label: "Profil", to: "/profil" },
+    { label: "Data", to: "/data" },
+    { label: "Berita", to: "/berita" },
+    { label: "Potensi Wisata", to: "/wisata" },
+    { label: "Produk Usaha", to: "/produk" },
+    { label: "Panduan", to: "/panduan" },
+    { label: "Survei", to: "/survei/hasil" },
+  ];
+
   return (
     <footer className="bg-primary text-white mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
@@ -23,19 +36,19 @@ export default function Footer() {
             <div className="space-y-3 text-ternary">
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-background2" />
-                <a href="tel:082338798647" className="hover:text-secondary">
+                <a href="tel:082338798647" className="hover:text-secondary text-background2">
                   0823 3879 8647
                 </a>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-background2" />
-                <a href="mailto:desasidoarum55564@gmail.com" className="hover:text-secondary">
+                <a href="mailto:desasidoarum55564@gmail.com" className="hover:text-secondary text-background2">
                   desasidoarum55564@gmail.com
                 </a>
               </div>
               <div className="flex items-center gap-2">
                 <Instagram className="w-4 h-4 text-background2" />
-                <a href="#" className="hover:text-secondary">
+                <a href="#" className="hover:text-secondary text-background2">
                   @kalsidoarum
                 </a>
               </div>
@@ -46,11 +59,11 @@ export default function Footer() {
           <div>
             <h4 className="font-bold text-lg mb-4 text-background2">Tautan Cepat</h4>
             <ul className="space-y-2 text-ternary">
-              {["Beranda", "Profil", "Data", "Potensi & Produk", "Panduan", "Survei"].map((item) => (
-                <li key={item}>
-                  <a href="#" className="hover:text-secondary transition">
-                    {item}
-                  </a>
+              {quickLinks.map((item) => (
+                <li key={item.label}>
+                  <Link to={item.to} className="hover:text-secondary transition text-background2 block">
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>

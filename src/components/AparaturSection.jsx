@@ -48,9 +48,9 @@ export default function AparaturSection() {
         <h2 className="text-3xl md:text-4xl font-bold text-primary text-center mb-12">Aparatur Kalurahan Sidoarum</h2>
 
         {/* Data Aparatur */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 justify-items-center">
           {currentData.map((person) => (
-            <div key={person.id} className="w-70 h-75 bg-card-bg rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col items-center">
+            <div key={person.id} className="w-70 h-75 bg-card-bg rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col items-center mx-auto">
               {/* Container Foto (Rasio 3:4 seperti pas foto) */}
               <div className="w-full aspect-[3/4] mb-4 overflow-hidden">
                 <img src={person.image} alt={person.name} className="w-full h-full object-cover object-top" />

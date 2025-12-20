@@ -50,9 +50,9 @@ export default function BpkalSection() {
         <h3 className="text-2xl md:text-2xl font-medium text-ternary text-center mb-12">Periode 2019-2025</h3>
 
         {/* Data Aparatur */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 justify-items-center">
           {currentData.map((person) => (
-            <div key={person.id} className="w-70 h-75 bg-card-bg rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col items-center">
+            <div key={person.id} className="w-70 h-75 bg-card-bg rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col items-center mx-auto">
               {/* Container Foto (Rasio 3:4 seperti pas foto) */}
               <div className="w-full aspect-[3/4] mb-4 overflow-hidden">
                 <img src={person.image} alt={person.name} className="w-full h-full object-cover object-top" />
@@ -61,10 +61,7 @@ export default function BpkalSection() {
               {/* Bagian Teks */}
               <div className="text-center w-full">
                 <h3 className="font-extrabold text-xl text-pamong leading-tight mb-1">{person.name}</h3>
-                {/* Menggunakan warna biru untuk jabatan agar mirip tulisan 'Carik' */}
-                <p className="text-lg font-bold text-secondary uppercase">
-                  {person.position} {/* atau person.role, sesuaikan dengan data Anda */}
-                </p>
+                <p className="text-lg font-bold text-secondary uppercase">{person.position}</p>
               </div>
             </div>
           ))}

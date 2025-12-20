@@ -46,23 +46,18 @@ export default function PamongSection() {
     <section className="py-16 md:py-24 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-3xl md:text-4xl font-bold text-primary text-center mb-12">Pamong Kalurahan Sidoarum</h2>
-
-        {/* Data Pamong */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 justify-items-center">
           {currentData.map((person) => (
-            <div key={person.id} className="w-70 h-75 bg-card-bg rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col items-center">
+            <div key={person.id} className="w-70 h-75 bg-card-bg rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col items-center mx-auto">
               {/* Container Foto (Rasio 3:4 seperti pas foto) */}
-              <div className="w-full aspect-[3/4] mb-4 overflow-hidden">
-                <img src={person.image} alt={person.name} className="w-full h-full object-cover object-top" />
+              <div className="w-full aspect-[3/4] mb-4 overflow-hidden rounded-xl">
+                <img src={person.image} alt={person.name} className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-500" />
               </div>
 
               {/* Bagian Teks */}
               <div className="text-center w-full">
                 <h3 className="font-extrabold text-xl text-pamong leading-tight mb-1">{person.name}</h3>
-                {/* Menggunakan warna biru untuk jabatan agar mirip tulisan 'Carik' */}
-                <p className="text-lg font-bold text-secondary uppercase">
-                  {person.position} {/* atau person.role, sesuaikan dengan data Anda */}
-                </p>
+                <p className="text-lg font-bold text-secondary uppercase">{person.position}</p>
               </div>
             </div>
           ))}
